@@ -4,7 +4,7 @@ Czy podany kod jest poprawny składniowo w Pythonie?
 
 x = 2 ; y = 3 ;
 if (x > y):
-    result = x; # niepotrzebna instrukcja warunkowa ( z góry wiadomy przebieg), niepotrzebne średniki
+    result = x; #poprawny ale niepotrzebna instrukcja warunkowa ( z góry wiadomy przebieg), niepotrzebne średniki
 else:
     result = y;
 for i in "qwerty": if ord(i) < 100: print(i) # instrukcja warunkowa powinna być w kolejnej linii
