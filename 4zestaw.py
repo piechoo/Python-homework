@@ -3,6 +3,8 @@ ZADANIE 4.2
 Rozwiązania zadań 3.5 i 3.6 z poprzedniego zestawu zapisać w postaci funkcji,
 które zwracają pełny string przez return.
 """
+
+
 print("---Zadanie 4.2---")
 
 
