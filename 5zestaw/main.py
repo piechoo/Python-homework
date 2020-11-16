@@ -39,19 +39,24 @@ def div_frac(frac1, frac2):
             value[0] /= g
             value[1] /= g
     except AssertionError:
-        raise ValueError
+        raise ZeroDivisionError
     return value
 
 
 def cmp_frac(frac1, frac2):
-    first = frac1[0] * frac2[1]
-    second = frac2[0] * frac1[1]
-    if first == second:
-        return 0
-    elif first < second:
+    if is_positive(frac1) and not is_positive(frac2):
+        return 1
+    elif is_positive(frac2) and not is_positive(frac1):
         return -1
     else:
-        return 1
+        first = frac1[0] * frac2[1]
+        second = frac2[0] * frac1[1]
+        if first == second:
+            return 0
+        elif first < second:
+            return -1
+        else:
+            return 1
 
 
 def is_positive(frac):
@@ -101,6 +106,7 @@ class TestFractions(unittest.TestCase):
     def test_cmp_frac(self):
         self.assertEqual(cmp_frac(self.f1, self.f2), 0)
         self.assertEqual(cmp_frac([20, 18], [10, 18]), 1)
+        self.assertEqual(cmp_frac([20, -18], [10, 18]), -1)
 
     def test_frac2float(self):
         self.assertAlmostEqual(frac2float(self.f1), 0.333, places=3, msg=None)
