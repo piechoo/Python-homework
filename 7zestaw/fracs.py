@@ -39,11 +39,21 @@ class Frac:
         return not self.__eq__(other)
 
     def __lt__(self, other):
+        if type(other) is float:
+            temp = other.as_integer_ratio()
+            other = Frac(temp[0], temp[1])
+        elif type(other) is not Frac:
+            other = Frac(other, 1)
         first = self.x * other.y
         second = self.y * other.x
         return first < second
 
     def __le__(self, other):
+        if type(other) is float:
+            temp = other.as_integer_ratio()
+            other = Frac(temp[0], temp[1])
+        elif type(other) is not Frac:
+            other = Frac(other, 1)
         first = self.x * other.y
         second = self.y * other.x
         return first <= second
