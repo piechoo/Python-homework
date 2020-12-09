@@ -67,21 +67,33 @@ class Frac:
             return Frac(int(self.x + self.y * other), self.y)
 
     def __sub__(self, other):
-        if type(other) is float:
+        if type(other) is int:
+            other = Frac(other, 1)
+        elif type(other) is float:
             temp = other.as_integer_ratio()
             other = Frac(temp[0], temp[1])
         return Frac(int(self.x * other.y - self.y * other.x),
                     int(self.y * other.y))
 
+    def __rsub__(self, other):
+        return self.__sub__(other)
+
     def __mul__(self, other):
-        if type(other) is float:
+        if type(other) is int:
+            other = Frac(other, 1)
+        elif type(other) is float:
             temp = other.as_integer_ratio()
             other = Frac(temp[0], temp[1])
         return Frac(self.x * other.x,
                     self.y * other.y)
 
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
     def __truediv__(self, other):
-        if type(other) is float:
+        if type(other) is int:
+            other = Frac(other, 1)
+        elif type(other) is float:
             temp = other.as_integer_ratio()
             other = Frac(temp[0], temp[1])
         try:
@@ -90,6 +102,9 @@ class Frac:
             raise ZeroDivisionError
         return Frac(int(self.x * other.y),
                     int(self.y * other.x))
+
+    def __rtruediv__(self, other):
+        return self.__truediv__(other)
 
     def __pos__(self):  # +frac = (+1)*frac
         return self

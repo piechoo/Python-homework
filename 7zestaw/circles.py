@@ -1,9 +1,11 @@
 from math import sqrt
+from math import pi
+
 import unittest
 
 
 class Point:
-    def __init__(self, x=0, y=0):
+    def __init__(self, x=0.0, y=0.0):
         self.x = x
         self.y = y
 
@@ -22,16 +24,11 @@ class Point:
         return str(self.x) + ", " + str(self.y)
 
 
-PI = 3.14
-
-
 class Circle:
     def __init__(self, x=0, y=0, radius=1):
-        try:
-            assert radius > 0
-        except AssertionError:
+        if radius < 0:
             raise ValueError("promień ujemny")
-        self.pt = Point(int(x), int(y))
+        self.pt = Point(x, y)
         self.radius = radius
 
     def __str__(self):
@@ -47,15 +44,33 @@ class Circle:
         return not self == other
 
     def area(self):
-        return PI * self.radius ** 2
+        return pi * self.radius ** 2
 
     def move(self, x, y):
         return self.pt + Point(x, y)
 
     def cover(self, other):
-        new_radius = (sqrt((self.pt.x - other.pt.x)**2 + (self.pt.y - other.pt.y)**2) + self.radius + other.radius)/2
-        new_x = abs(self.pt.x - other.pt.x)/2
-        new_y = abs(self.pt.y - other.pt.y)/2
+
+        distance = sqrt((self.pt.x - other.pt.x)**2 + (self.pt.y - other.pt.y)**2)
+        # sprawdzam czy okregi sie zawieraja
+        if distance <= abs(self.radius - other.radius):
+            if self.radius >= other.radius:
+                return self
+            else:
+                return other
+
+        else:
+            new_radius = (distance + self.radius + other.radius)/2
+
+            if other.radius >= self.radius:
+                theta = 1 / 2 + (other.radius - self.radius) / (2 * distance)
+                new_x = (1.0 - theta) * self.pt.x + theta * other.pt.x
+                new_y = (1.0 - theta) * self.pt.y + theta * other.pt.y
+            else:
+                theta = 1 / 2 + (self.radius - other.radius) / (2 * distance)
+                new_x = (1.0 - theta) * other.pt.x + theta * self.pt.x
+                new_y = (1.0 - theta) * other.pt.y + theta * self.pt.y
+
         return Circle(new_x, new_y, new_radius)
 
 
@@ -74,10 +89,11 @@ class TestCircle(unittest.TestCase):
         self.assertEqual(self.c3.move(-2, -3), Circle(2, 0, 2))
 
     def test_area(self):
-        self.assertEqual(self.c3.area(), 12.56)
+        self.assertEqual(self.c3.area(), 12.566370614359172)
 
     def test_cover(self):
-        self.assertEqual(self.c2.cover(self.c3), Circle(2, 1.5, 8.5))
+        self.assertEqual(self.c2.cover(self.c3), Circle(0, 0, 10))
+        self.assertEqual(Circle(0,0,1).cover(Circle(0, -4, 1)), Circle(0, -2, 3))
 
 
 if __name__ == '__main__':
