@@ -1,4 +1,4 @@
-from random import  shuffle
+from random import shuffle
 
 SUITS = ("Kier", "Karo", "Pik", "Trefl")
 RANKS = (
@@ -147,7 +147,6 @@ class Game:
 
             self.player.display()
             print()
-
             self.dealer.display()
 
             if not self.player_is_over():
