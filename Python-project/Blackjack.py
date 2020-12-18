@@ -1,42 +1,43 @@
 from random import shuffle
 
-SUITS = ("Kier", "Karo", "Pik", "Trefl")
-RANKS = (
-    "Dwójka",
-    "Trójka",
-    "Czwórka",
-    "Piątka",
-    "Szóstka",
-    "Siódemka",
-    "Ósemka",
-    "Dziewiątka",
-    "Dziesiątka",
-    "Jopek",
-    "Dama",
-    "Król",
-    "As",
-)
-VALUES = {
-    "Dwójka": 2,
-    "Trójka": 3,
-    "Czwórka": 4,
-    "Piątka": 5,
-    "Szóstka": 6,
-    "Siódemka": 7,
-    "Ósemka": 8,
-    "Dziewiątka": 9,
-    "Dziesiątka": 10,
-    "Jopek": 10,
-    "Dama": 10,
-    "Król": 10,
-    "As": 11,
-}
 
-
-class BrakKart(Exception): pass
+class NoCardsException(Exception):
+    pass
 
 
 class Card:
+    SUITS = ("Kier", "Karo", "Pik", "Trefl")
+    RANKS = (
+        "Dwójka",
+        "Trójka",
+        "Czwórka",
+        "Piątka",
+        "Szóstka",
+        "Siódemka",
+        "Ósemka",
+        "Dziewiątka",
+        "Dziesiątka",
+        "Jopek",
+        "Dama",
+        "Król",
+        "As",
+    )
+    VALUES = {
+        "Dwójka": 2,
+        "Trójka": 3,
+        "Czwórka": 4,
+        "Piątka": 5,
+        "Szóstka": 6,
+        "Siódemka": 7,
+        "Ósemka": 8,
+        "Dziewiątka": 9,
+        "Dziesiątka": 10,
+        "Jopek": 10,
+        "Dama": 10,
+        "Król": 10,
+        "As": 11,
+    }
+
     def __init__(self, suit, rank):
         self.suit = suit
         self.rank = rank
@@ -50,8 +51,8 @@ class Deck:
 
     def __init__(self):
         self.deck = []
-        for suit in SUITS:
-            for rank in RANKS:
+        for suit in Card.SUITS:
+            for rank in Card.RANKS:
                 self.deck.append(Card(suit, rank))
 
     def shuffle(self):
@@ -62,7 +63,7 @@ class Deck:
         if len(self.deck) > 1:
             return self.deck.pop()
         else:
-            raise BrakKart
+            raise NoCardsException
 
 
 class Competitor:
@@ -82,8 +83,8 @@ class Competitor:
         self.value = 0
         has_ace = False
         for card in self.cards:
-            self.value += int(VALUES.get(card.rank))
-            if VALUES.get(card.rank) == 11:
+            self.value += int(Card.VALUES.get(card.rank))
+            if Card.VALUES.get(card.rank) == 11:
                 has_ace = True
 
         if has_ace and self.value > 21:
@@ -130,7 +131,7 @@ class Game:
                 self.dealer.add_card(self.deck.deal_card())
             else:
                 self.player.add_card(self.deck.deal_card())
-        except BrakKart:
+        except NoCardsException:
             self.deck = Deck()
             if dealer:
                 self.dealer.add_card(self.deck.deal_card())
@@ -147,6 +148,7 @@ class Game:
 
             self.player.display()
             print()
+
             self.dealer.display()
 
             if not self.player_is_over():
@@ -166,12 +168,20 @@ class Game:
             player_hand_value = self.player.get_value()
             dealer_hand_value = self.dealer.get_value()
 
-            print("---Wyniki Końcowe---")
+            print("--- Krupier odkrywa kartę ---")
+            print()
+            self.dealer.display(True)
+            while dealer_hand_value <= 16:
+                print("Krupier dobiera kartę")
+                self.give_card(True)
+                self.dealer.display(True)
+                dealer_hand_value = self.dealer.get_value()
+
+            print("--- Końcowe wyniki ---")
             print()
             self.player.display()
             self.dealer.display(True)
-
-            if 22 > player_hand_value > dealer_hand_value:
+            if 22 > player_hand_value > dealer_hand_value or dealer_hand_value >= 22 > player_hand_value:
                 print("Wygrywasz!")
                 print("-----------------------------------")
             elif player_hand_value == dealer_hand_value:
@@ -185,9 +195,9 @@ class Game:
             self.player.throw_cards()
 
             again = input("Czy chcesz zagrać ponownie? [T/N] ")
-            while again.lower() not in ["t", "n"]:
+            while again.lower() not in ["t", "tak", "nie", "n"]:
                 again = input("Wybierz T lub N ")
-            if again.lower() == "n":
+            if again.lower() == "n" or again.lower() == "nie":
                 print("--- Kasyno dziękuje za wizytę! ---")
                 playing = False
 
