@@ -13,7 +13,8 @@ class RandomQueue:
 
     def remove(self):
         x = random.randint(0, len(self.items)-1)
-        return self.items.pop(x)
+        self.items[x], self.items[-1] = self.items[-1], self.items[x]
+        return self.items.pop()
 
     def is_empty(self):
         return not self.items
